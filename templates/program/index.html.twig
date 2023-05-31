@@ -10,7 +10,11 @@
             <h2>{{ loop.index }} / {{ program.title }} - Catégorie : {{ program.category.name }}</h2>
             <p>{{ program.synopsis }}</p>
             {# Lien vers la fiche de la série : #}
-            <a href="{{ path("program_show", { id: program.id }) }}">Voir la fiche</a>
+            {% if program.id is not empty %}
+                <a href="{{ path("program_show", { 'id': program.id }) }}">Voir la fiche</a>
+            {% else %}
+                <p>Erreur : ID de programme invalide</p>
+            {% endif %}
         </div>
     {% else %}
         Aucune série trouvée.

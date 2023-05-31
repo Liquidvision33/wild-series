@@ -14,16 +14,26 @@ class CategoryFixtures extends Fixture
         'Animation',
         'Fantastic',
         'Horreur',
-        ];
+    ];
 
     public function load(ObjectManager $manager)
-    {
-        foreach (self::CATEGORIES as $key => $categoryName) {
+    {/*
+        for ($i = 0; $i < count(self::CATEGORIES); $i++) {
+
             $category = new Category();
-            $category->setName($categoryName);
+            $category->setName(self::CATEGORIES[$i]);
+            $categoryName = $category->getName();
+
             $manager->persist($category);
             $this->addReference('category_' . $categoryName, $category);
         }
         $manager->flush();
+    */}
+
+    public function getDependencies()
+    {
+        return [
+            AppFixtures::class,
+        ];
     }
 }
