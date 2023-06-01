@@ -6,7 +6,9 @@ use App\Repository\ProgramRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
 class Program
@@ -16,10 +18,19 @@ class Program
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    #[Assert\Unique(message: 'Ce titre existe déjà.')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(
+        pattern: '/^(?!.*\bplus belle la vie\b).*$/',
+        match: true,
+        message: 'On parle de vraies séries ici.'
+    )]
     private ?string $synopsis = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -147,5 +158,18 @@ class Program
         }
 
         return $this;
+    }
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('title', new Assert\Unique(['message' => 'Ce titre existe déjà.']));
+        $metadata->addPropertyConstraint('title', new Assert\NotBlank(['message' => 'Le champ titre ne doit pas être vide.']));
+        $metadata->addPropertyConstraint('title', new Assert\Length(['max' => 255, 'maxMessage' => 'Le champ titre doit faire moins de {{ limit }} caractères.']));
+
+        $metadata->addPropertyConstraint('synopsis', new Assert\NotBlank(['message' => 'Le champ synopsis ne doit pas être vide.']));
+        $metadata->addPropertyConstraint('synopsis', new Assert\Regex([
+            'pattern' => '/^(?!.*\bplus belle la vie\b).*$/',
+            'match' => true,
+            'message' => 'On parle de vraies séries ici.',
+        ]));
     }
 }

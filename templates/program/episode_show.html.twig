@@ -1,15 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de l'épisode{% endblock %}
+{% block title %}
+    {{ program.name }} - Saison {{ season.number }}
+{% endblock %}
 
 {% block body %}
     <h1>{{ program.name }}</h1>
     <h2>Saison {{ season.number }}</h2>
-    <h3>Épisode {{ episode.number }} : {{ episode.title }}</h3>
+    <h3>Épisode {{ episode.number }} - {{ episode.title }}</h3>
     <p>{{ episode.summary }}</p>
 
-    <a href="{{ path("program_show_comment", {"program_id": 1, "comment_id": 2 })}}">Voir les commentaires de l'épisode</a>
-    <a href="{{ path('program_episode_show', { 'programId': program.id, 'seasonId': season.id, 'episodeId': episode.id }) }}">Voir la fiche de l'épisode</a>
+    <hr>
+
+    <h4>Liste des épisodes de la saison :</h4>
+    <ul>
+        {% for episode in season.episodes %}
+            <li>
+                <a href="{{ path('program_episode_show', {'programId': program.id, 'seasonId': season.id, 'episodeId': episode.id}) }}">
+                    Épisode {{ episode.number }} - {{ episode.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 
     <a href="{{ path('app_index') }}">Retour à l'accueil</a>
 {% endblock %}
